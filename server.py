@@ -14,7 +14,9 @@ def home():
     localhost:5000/
 
     :return:        the rendered template 'home.html'
+    this is a comment
     """
+    
     return render_template('home.html')
 
 # If we're running in stand alone mode, run the application
