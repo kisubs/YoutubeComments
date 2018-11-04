@@ -19,6 +19,11 @@ PEOPLE = {
         "fname": "Bunny",
         "lname": "Easter",
         "timestamp": get_timestamp()
+    },
+    "Gaeun": {
+        "fname": "gaeun",
+        "lname": "lee",
+        "timestamp": get_timestamp()
     }
 }
 

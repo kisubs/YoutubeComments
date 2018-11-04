@@ -1,4 +1,11 @@
+<<<<<<< HEAD
 from flask import render_template
+=======
+from flask import (
+    Flask,
+    render_template
+)
+>>>>>>> 580ac02ed142ff6dd138d5dc6d24340aa9c56f8b
 import connexion
 
 # Create the application instance
@@ -14,6 +21,10 @@ def home():
     This function just responds to the browser ULR
     localhost:5000/
     :return:        the rendered template 'home.html'
+<<<<<<< HEAD
+=======
+
+>>>>>>> 580ac02ed142ff6dd138d5dc6d24340aa9c56f8b
     """
     return render_template('home.html')
 
