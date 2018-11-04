@@ -15,8 +15,9 @@ def home():
 
     :return:        the rendered template 'home.html'
     this is a comment
+    yoloooo
     """
-    
+
     return render_template('home.html')
 
 # If we're running in stand alone mode, run the application
