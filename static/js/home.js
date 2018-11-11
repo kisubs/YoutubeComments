@@ -29,7 +29,7 @@ ns.model = (function() {
                 $event_pump.trigger('model_error', [xhr, textStatus, errorThrown]);
             })
         },
-        create: function(fname, lname) {
+        create: function(fname, lname, comm) {
             let ajax_options = {
                 type: 'POST',
                 url: 'api/people',
@@ -38,7 +38,8 @@ ns.model = (function() {
                 dataType: 'json',
                 data: JSON.stringify({
                     'fname': fname,
-                    'lname': lname
+                    'lname': lname,
+                    'comm': comm
                 })
             };
             $.ajax(ajax_options)
@@ -49,7 +50,7 @@ ns.model = (function() {
                 $event_pump.trigger('model_error', [xhr, textStatus, errorThrown]);
             })
         },
-        update: function(fname, lname) {
+        update: function(fname, lname, comm) {
             let ajax_options = {
                 type: 'PUT',
                 url: 'api/people/' + lname,
@@ -58,7 +59,8 @@ ns.model = (function() {
                 dataType: 'json',
                 data: JSON.stringify({
                     'fname': fname,
-                    'lname': lname
+                    'lname': lname,
+                    'comm': comm
                 })
             };
             $.ajax(ajax_options)
@@ -92,15 +94,18 @@ ns.view = (function() {
     'use strict';
 
     let $fname = $('#fname'),
-        $lname = $('#lname');
+        $lname = $('#lname'),
+        $comm = $('#comm'),;
 
     // return the API
     return {
         reset: function() {
+            $comm.val('');
             $lname.val('');
             $fname.val('').focus();
         },
-        update_editor: function(fname, lname) {
+        update_editor: function(fname, lname, comm) {
+            $comm.val(comm);
             $lname.val(lname);
             $fname.val(fname).focus();
         },
@@ -113,7 +118,7 @@ ns.view = (function() {
             // did we get a people array?
             if (people) {
                 for (let i=0, l=people.length; i < l; i++) {
-                    rows += `<tr><td class="fname">${people[i].fname}</td><td class="lname">${people[i].lname}</td><td>${people[i].timestamp}</td></tr>`;
+                    rows += `<tr><td class="fname">${people[i].fname}</td><td class="lname">${people[i].lname}</td><td>${people[i].timestamp}</td><td class="comm">${people[i].comm}</td></tr>`;
                 }
                 $('table > tbody').append(rows);
             }
@@ -137,7 +142,8 @@ ns.controller = (function(m, v) {
         view = v,
         $event_pump = $('body'),
         $fname = $('#fname'),
-        $lname = $('#lname');
+        $lname = $('#lname'),
+        $comm = $('#comm');
 
     // Get the data from the model after the controller is done initializing
     setTimeout(function() {
@@ -145,19 +151,23 @@ ns.controller = (function(m, v) {
     }, 100)
 
     // Validate input
-    function validate(fname, lname) {
-        return fname !== "" && lname !== "";
+    function validate(fname, lname, comm) {
+        return fname !== "" && lname !== "" && comm!=="";
     }
 
     // Create our event handlers
     $('#create').click(function(e) {
         let fname = $fname.val(),
-            lname = $lname.val();
+            lname = $lname.val(),
+            comm = $comm.val();
+            console.log(fname);
+            console.log(lname);
+            console.log(comm);
 
         e.preventDefault();
 
-        if (validate(fname, lname)) {
-            model.create(fname, lname)
+        if (validate(fname, lname,comm)) {
+            model.create(fname, lname,comm);
         } else {
             alert('Problem with first or last name input');
         }
@@ -165,12 +175,13 @@ ns.controller = (function(m, v) {
 
     $('#update').click(function(e) {
         let fname = $fname.val(),
-            lname = $lname.val();
+            lname = $lname.val(),
+            comm = $comm.val();
 
         e.preventDefault();
 
         if (validate(fname, lname)) {
-            model.update(fname, lname)
+            model.update(fname, lname,comm)
         } else {
             alert('Problem with first or last name input');
         }
@@ -197,7 +208,8 @@ ns.controller = (function(m, v) {
     $('table > tbody').on('dblclick', 'tr', function(e) {
         let $target = $(e.target),
             fname,
-            lname;
+            lname,
+            comm;
 
         fname = $target
             .parent()
@@ -209,7 +221,12 @@ ns.controller = (function(m, v) {
             .find('td.lname')
             .text();
 
-        view.update_editor(fname, lname);
+        comm = $target
+            .parent()
+            .find('td.comm')
+            .text();
+
+        view.update_editor(fname, lname, comm);
     });
 
     // Handle the model events

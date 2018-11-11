@@ -20,16 +20,19 @@ PEOPLE = {
         "fname": "Doug",
         "lname": "Farrell",
         "timestamp": get_timestamp(),
+        "comm": "HI",
     },
     "Brockman": {
         "fname": "Kent",
         "lname": "Brockman",
         "timestamp": get_timestamp(),
+        "comm": "HI",
     },
     "Easter": {
         "fname": "Bunny",
         "lname": "Easter",
         "timestamp": get_timestamp(),
+        "comm": "HI",
     },
 }
 
@@ -73,13 +76,16 @@ def create(person):
     """
     lname = person.get("lname", None)
     fname = person.get("fname", None)
-
+    comm = person.get("comm", None)
+    print(lname)
+    print(comm)
     # Does the person exist already?
     if lname not in PEOPLE and lname is not None:
         PEOPLE[lname] = {
             "lname": lname,
             "fname": fname,
             "timestamp": get_timestamp(),
+            "comm": comm
         }
         return make_response(
             "{lname} successfully created".format(lname=lname), 201
@@ -104,6 +110,7 @@ def update(lname, person):
     if lname in PEOPLE:
         PEOPLE[lname]["fname"] = person.get("fname")
         PEOPLE[lname]["timestamp"] = get_timestamp()
+        PEOPLE[lname]["comm"] = person.get("comm")
 
         return PEOPLE[lname]
 
@@ -121,6 +128,8 @@ def delete(lname):
     :return:        200 on successful delete, 404 if not found
     """
     # Does the person to delete exist?
+
+
     if lname in PEOPLE:
         del PEOPLE[lname]
         return make_response(

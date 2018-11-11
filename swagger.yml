@@ -43,6 +43,8 @@ paths:
                   type: string
                 timestamp:
                   type: string
+                comm:
+                  type: string
 
     post:
       operationId: people.create
@@ -64,6 +66,9 @@ paths:
               lname:
                 type: string
                 description: Last name of person to create
+              comm:
+                type: string
+                description: comments created
       responses:
         201:
           description: Successfully created person in list
@@ -92,6 +97,8 @@ paths:
                 type: string
               timestamp:
                 type: string
+              comm:
+                type: string
 
     put:
       operationId: people.update
@@ -113,6 +120,8 @@ paths:
               fname:
                 type: string
               lname:
+                type: string
+              comm:
                 type: string
       responses:
         200:
