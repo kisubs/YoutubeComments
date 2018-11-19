@@ -95,7 +95,7 @@ ns.view = (function() {
 
     let $fname = $('#fname'),
         $lname = $('#lname'),
-        $comm = $('#comm'),;
+        $comm = $('#comm');
 
     // return the API
     return {
