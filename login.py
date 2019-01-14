@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-
+from flask import make_response, abort, session, Blueprint, request
 import os
-
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 import flask
 
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
+
+login = Blueprint('login', __name__)
 
 # The CLIENT_SECRETS_FILE variable specifies the name of a file that contains
 # the OAuth 2.0 information for this application, including its client_id and
@@ -19,14 +21,14 @@ SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl', 'https://www.goog
 API_SERVICE_NAME = 'youtube'
 API_VERSION = 'v3'
 
-app = flask.Flask(__name__)
+#app = flask.Flask(__name__)
 # Note: A secret key is included in the sample so that it works, but if you
 # use this code in your application please replace this with a truly secret
 # key. See http://flask.pocoo.org/docs/0.12/quickstart/#sessions.
-app.secret_key = 'REPLACE ME - this value is here as a placeholder.'
 
 
-@app.route('/')
+
+@login.route('/login')
 def index():
   if 'credentials' not in flask.session:
     return flask.redirect('authorize')
@@ -43,13 +45,13 @@ def index():
     forUsername='GoogleDevelopers')
 
 
-@app.route('/authorize')
+@login.route('/authorize')
 def authorize():
   # Create a flow instance to manage the OAuth 2.0 Authorization Grant Flow
   # steps.
   flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
       CLIENT_SECRETS_FILE, scopes=SCOPES)
-  flow.redirect_uri = flask.url_for('oauth2callback', _external=True)
+  flow.redirect_uri = flask.url_for('login.oauth2callback', _external=True)
   authorization_url, state = flow.authorization_url(
       # This parameter enables offline access which gives your application
       # both an access and refresh token.
@@ -64,14 +66,14 @@ def authorize():
   return flask.redirect(authorization_url)
 
 
-@app.route('/oauth2callback')
+@login.route('/oauth2callback')
 def oauth2callback():
   # Specify the state when creating the flow in the callback so that it can
   # verify the authorization server response.
   state = flask.session['state']
   flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
       CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
-  flow.redirect_uri = flask.url_for('oauth2callback', _external=True)
+  flow.redirect_uri = flask.url_for('login.oauth2callback', _external=True)
 
   # Use the authorization server's response to fetch the OAuth 2.0 tokens.
   authorization_response = flask.request.url
@@ -91,7 +93,7 @@ def oauth2callback():
       'scopes': credentials.scopes
   }
 
-  return flask.redirect(flask.url_for('index'))
+  return flask.redirect(flask.url_for('login.index'))
 
 def channels_list_by_username(client, **kwargs):
   response = client.channels().list(
@@ -99,10 +101,3 @@ def channels_list_by_username(client, **kwargs):
   ).execute()
 
   return flask.jsonify(**response)
-
-
-if __name__ == '__main__':
-  # When running locally, disable OAuthlib's HTTPs verification. When
-  # running in production *do not* leave this option enabled.
-  os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-  app.run('localhost', 8090, debug=True)

@@ -12,6 +12,26 @@ basePath: /api
 
 # Paths supported by the server application
 paths:
+  /video/{videoId}:
+    get:
+      operationId: video.play
+      tags:
+        - Video
+      summary: Play video and list comments
+      description: Play video and list comments
+      parameters:
+        - name: videoId
+          in: path
+          type: string
+          description: videoId retrieved from youtube
+          required: true
+      responses:
+        200:
+          description: Successfully retrieved video from youtube
+          schema:
+            properties:
+              response:
+                type: string
   /people:
     get:
       operationId: people.read_all
