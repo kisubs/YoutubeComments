@@ -40,9 +40,8 @@ def index():
   client = googleapiclient.discovery.build(
       API_SERVICE_NAME, API_VERSION, credentials=credentials)
 
-  return channels_list_by_username(client,
-    part='snippet,contentDetails,statistics',
-    forUsername='GoogleDevelopers')
+  return flask.jsonify(flask.session['credentials'])
+
 
 
 @login.route('/authorize')
@@ -93,7 +92,7 @@ def oauth2callback():
       'scopes': credentials.scopes
   }
 
-  return flask.redirect(flask.url_for('login.index'))
+  return flask.redirect('/')
 
 def channels_list_by_username(client, **kwargs):
   response = client.channels().list(
