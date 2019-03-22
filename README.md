@@ -19,4 +19,4 @@ Run the comments.py
 Modify with personal Youtube Data API developer key
 
 ###Running
-Login with personal google login info
+Login with personal google login info.
